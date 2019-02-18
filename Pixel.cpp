@@ -12,3 +12,15 @@ string Pixel::toString() {
 
     return ss.str();
 }
+
+int Pixel::getRed() const {
+    return red;
+}
+
+int Pixel::getGreen() const {
+    return green;
+}
+
+int Pixel::getBlue() const {
+    return blue;
+}

@@ -35,3 +35,15 @@ string Image::toString() {
 
     return ss.str();
 }
+
+int Image::getWidth() const {
+    return width;
+}
+
+int Image::getHeight() const {
+    return height;
+}
+
+int Image::getMaxLuminance() const {
+    return max_luminance;
+}

@@ -2,6 +2,7 @@
 #include <fstream>
 #include "Image.h"
 #include "ImageReader.h"
+#include "ImageProcessor.h"
 
 using namespace std;
 
@@ -21,6 +22,10 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+    ImageProcessor p = ImageProcessor(argc, argv);
+
+    Image o = p.blur(in);
+
     ofstream output = ofstream(argv[2]);
-    output << in.toString();
+    output << o.toString();
 }

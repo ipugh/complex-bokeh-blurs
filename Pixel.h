@@ -14,6 +14,9 @@ public:
     Pixel() {};
     Pixel(int red, int green, int blue) : red(red), green(green), blue(blue) {};
     string toString();
+    int getRed() const;
+    int getGreen() const;
+    int getBlue() const;
 
 private:
     int red;

@@ -18,6 +18,9 @@ public:
     void setPixel(int width, int height, int red, int green, int blue);
     Pixel pixelAt(int width, int height);
     string toString();
+    int getWidth() const;
+    int getHeight() const;
+    int getMaxLuminance() const;
 
 private:
     int width;
