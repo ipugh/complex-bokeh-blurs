@@ -12,16 +12,18 @@ class ImageProcessor {
 public:
     ImageProcessor(int argc, char* argv[]);
     Image blur(Image& i);
+    Image simpleBlur(Image& i);
+    Image complexBlur(Image& i);
 
 private:
-    double* kernelX;
-    double* kernelY;
+    double** kernelX;
+    double** kernelY;
     int kernelSize;
     string blurtype;
     void meanKernel();
     void gaussKernel(double sd);
-    void processKernelX(Image& in, Image& out);
-    void processKernelY(Image& in, Image& out);
+    void processKernelX(Image& in, Image& out, int kernelNum);
+    void processKernelY(Image& in, Image& out, int kernelNum);
 };
 
 

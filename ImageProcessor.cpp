@@ -16,52 +16,80 @@ ImageProcessor::ImageProcessor(int argc, char **argv) {
         kernelSize = (stoi(argv[4]) * 2) + 1;
     }
 
+    /*
     kernelX = new double[kernelSize];
     kernelY = new double[kernelSize];
-
+*/
     if (blurtype == "mean") {
         // Creates mean kernel
         meanKernel();
     } else if (blurtype == "gauss") {
         // Creates gaussian kernel
         gaussKernel(stod(argv[5]));
+    } else if (blurtype == "sobel") {
+        // Creates sobel kernels
     }
 }
 
 void ImageProcessor::meanKernel() {
+    kernelX = new double*[1];
+    kernelX[0] = new double[kernelSize];
+    kernelY = new double*[1];
+    kernelY[0] = new double[kernelSize];
+
     for (int i = 0; i < kernelSize; i++) {
-        kernelX[i] = 1;
-        kernelY[i] = 1;
+        kernelX[0][i] = 1;
+        kernelY[0][i] = 1;
     }
 }
 
 void ImageProcessor::gaussKernel(double sd) {
+    kernelX = new double*[1];
+    kernelX[0] = new double[kernelSize];
+    kernelY = new double*[1];
+    kernelY[0] = new double[kernelSize];
+
     for (int i = 0; i < kernelSize/2; i++) {
         double kernelValue = (1/sqrt(2*M_PI*pow(sd,2)))*pow(M_E,-(pow(i, 2)/(2*pow(sd, 2))));
         if (i == 0) {
-            kernelX[kernelSize/2] = kernelValue;
-            kernelY[kernelSize/2] = kernelValue;
+            kernelX[0][kernelSize/2] = kernelValue;
+            kernelY[0][kernelSize/2] = kernelValue;
         } else {
-            kernelX[kernelSize/2 + i] = kernelValue;
-            kernelY[kernelSize/2 + i] = kernelValue;
-            kernelX[kernelSize/2 - i] = kernelValue;
-            kernelY[kernelSize/2 - i] = kernelValue;
+            kernelX[0][kernelSize/2 + i] = kernelValue;
+            kernelY[0][kernelSize/2 + i] = kernelValue;
+            kernelX[0][kernelSize/2 - i] = kernelValue;
+            kernelY[0][kernelSize/2 - i] = kernelValue;
         }
     }
 }
 
+
 Image ImageProcessor::blur(Image& i) {
+    if (blurtype == "mean" || blurtype == "gauss") {
+        return simpleBlur(i);
+    } else {
+        return complexBlur(i);
+    }
+}
+
+Image ImageProcessor::simpleBlur(Image& i) {
     //first pass
     Image f = Image(i.getWidth(), i.getHeight(), i.getMaxLuminance());
-    processKernelX(i, f);
+    processKernelX(i, f, 0);
 
     //second pass
     Image s = Image(i.getWidth(), i.getHeight(), i.getMaxLuminance());
-    processKernelY(f, s);
+    processKernelY(f, s, 0);
     return s;
 }
 
-void ImageProcessor::processKernelX(Image& in, Image& out) {
+Image ImageProcessor::complexBlur(Image& i) {
+    //do complex blur stuff here
+
+    return i;
+}
+
+void ImageProcessor::processKernelX(Image& in, Image& out, int kernelNum) {
     // run kernel X on image in to produce image out
     int width = in.getWidth();
     int height = in.getHeight();
@@ -73,7 +101,7 @@ void ImageProcessor::processKernelX(Image& in, Image& out) {
             int blueSum = 0;
             for (int k = -(kernelSize/2); k <= (kernelSize/2); k++) {
                 if (!(j + k < 0 || j + k > in.getWidth()-1)) {
-                    double kernelValue = kernelX[k + (kernelSize/2)];
+                    double kernelValue = kernelX[kernelNum][k + (kernelSize/2)];
                     Pixel p = in.pixelAt(j + k, i);
                     redSum += (int)(p.getRed() * kernelValue);
                     greenSum += (int)(p.getGreen() * kernelValue);
@@ -86,7 +114,7 @@ void ImageProcessor::processKernelX(Image& in, Image& out) {
     }
 }
 
-void ImageProcessor::processKernelY(Image& in, Image& out) {
+void ImageProcessor::processKernelY(Image& in, Image& out, int kernelNum) {
     // run kernel X on image in to produce image out
     int width = in.getWidth();
     int height = in.getHeight();
@@ -98,7 +126,7 @@ void ImageProcessor::processKernelY(Image& in, Image& out) {
             int blueSum = 0;
             for (int k = -(kernelSize/2); k <= (kernelSize/2); k++) {
                 if (!(i + k < 0 || i + k > in.getHeight()-1)) {
-                    double kernelValue = kernelX[k + (kernelSize/2)];
+                    double kernelValue = kernelX[kernelNum][k + (kernelSize/2)];
                     Pixel p = in.pixelAt(j, i+k);
                     redSum += (int)(p.getRed() * kernelValue);
                     greenSum += (int)(p.getGreen() * kernelValue);
